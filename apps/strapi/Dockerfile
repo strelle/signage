@@ -9,8 +9,8 @@ ENV CI=true \
 RUN corepack enable && apk add --no-cache git python3 make g++
 # Use create-strapi-app to scaffold into /app
 RUN npx create-strapi-app@latest . --no-run --quickstart || npx create-strapi-app@latest . --no-run
-# Install deps and build admin
-RUN npm ci --omit=dev && npm run build
+# Install deps (include dev for admin build) and build admin
+RUN npm ci && npm run build
 
 # Runtime stage: minimal image
 FROM node:20-alpine AS runtime
