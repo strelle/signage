@@ -1,0 +1,29 @@
+name: build-publish
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'apps/strapi/**'
+      - '.github/workflows/build-publish.yml'
+  workflow_dispatch: {}
+
+jobs:
+  build-publish-strapi:
+    permissions:
+      contents: read
+      packages: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Docker login GHCR
+        run: echo "${{ github.token }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      - name: Build image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/strapi:main
+          docker build -t "$IMAGE" apps/strapi
+      - name: Push image
+        run: |
+          IMAGE=ghcr.io/${{ github.repository }}/strapi:main
+          docker push "$IMAGE"
