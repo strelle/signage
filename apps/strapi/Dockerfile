@@ -4,13 +4,15 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 ENV CI=true \
-    NODE_ENV=production
-# Create empty app folder and initialize Strapi app
+    NODE_ENV=production \
+    STRAPI_TELEMETRY_DISABLED=true \
+    npm_config_yes=true
+# Tooling for native deps
 RUN corepack enable && apk add --no-cache git python3 make g++
-# Use create-strapi-app to scaffold into /app
-RUN npx create-strapi-app@latest . --no-run --quickstart || npx create-strapi-app@latest . --no-run
-# Install deps (include dev for admin build) and build admin
-RUN npm ci && npm run build
+# Scaffold Strapi app non-interactive
+RUN npx --yes create-strapi-app@latest . --no-run --quickstart || npx --yes create-strapi-app@latest . --no-run
+# Install deps (dev deps included for admin build) and build admin
+RUN npm install && npm run build
 
 # Runtime stage: minimal image
 FROM node:20-alpine AS runtime
