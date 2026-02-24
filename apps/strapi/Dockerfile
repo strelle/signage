@@ -1,12 +1,13 @@
 # syntax=docker/dockerfile:1
 
 # Build stage: repo-based Strapi v5 app build
-FROM node:20-alpine AS build
+FROM node:20-bullseye AS build
 WORKDIR /app
 ENV CI=true \
     NODE_ENV=production \
     STRAPI_TELEMETRY_DISABLED=true
-RUN apk add --no-cache python3 make g++
+# Install build deps (Debian-based)
+RUN apt-get update && apt-get install -y --no-install-recommends python3 make g++ && rm -rf /var/lib/apt/lists/*
 # Install deps and build admin
 COPY package*.json ./
 RUN npm install
@@ -14,7 +15,7 @@ COPY . .
 RUN npm run build
 
 # Runtime stage: minimal image
-FROM node:20-alpine AS runtime
+FROM node:20-bullseye AS runtime
 WORKDIR /srv/app
 ENV NODE_ENV=production \
     PORT=1337 \
