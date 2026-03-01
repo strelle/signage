@@ -27,4 +27,4 @@ jobs:
           DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
         run: |
           ssh -o StrictHostKeyChecking=yes "$DEPLOY_USER@$DEPLOY_HOST" \
-            'cd "$DEPLOY_PATH/compose" && sudo -n /usr/local/bin/docker compose pull && sudo -n /usr/local/bin/docker compose up -d --build && sudo -n /usr/local/bin/docker compose ps'
+            "cd '${DEPLOY_PATH}/compose' && sudo -n /usr/local/bin/docker compose pull && sudo -n /usr/local/bin/docker compose up -d --build && sudo -n /usr/local/bin/docker compose ps"
