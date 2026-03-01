@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Weekly Menu Upload</title>
+    <style>
+      :root {
+        --bg: #f7f9fc;
+        --card: #ffffff;
+        --text: #102030;
+        --muted: #5a6c7d;
+        --line: #d9e1ea;
+        --accent: #0f6ab8;
+        --accent-2: #0b4f89;
+        --good: #1f7a3b;
+        --bad: #a32222;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+        background: radial-gradient(circle at top right, #e5eef8 0%, var(--bg) 55%);
+        color: var(--text);
+      }
+
+      main {
+        max-width: 760px;
+        margin: 32px auto;
+        padding: 0 16px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 8px 26px rgba(11, 38, 63, 0.08);
+      }
+
+      h1 {
+        margin: 0 0 8px;
+        font-size: 28px;
+        line-height: 1.1;
+      }
+
+      p {
+        margin: 0 0 20px;
+        color: var(--muted);
+      }
+
+      form {
+        display: grid;
+        gap: 14px;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+      }
+
+      @media (max-width: 720px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      label {
+        display: block;
+        font-weight: 600;
+        margin-bottom: 6px;
+      }
+
+      input,
+      textarea,
+      button {
+        font: inherit;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 10px 12px;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+
+      button {
+        background: linear-gradient(135deg, var(--accent), var(--accent-2));
+        color: #fff;
+        border: none;
+        border-radius: 10px;
+        padding: 11px 16px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      button[disabled] {
+        opacity: 0.6;
+        cursor: not-allowed;
+      }
+
+      .status {
+        margin-top: 14px;
+        padding: 12px;
+        border-radius: 10px;
+        border: 1px solid transparent;
+        display: none;
+      }
+
+      .status.ok {
+        display: block;
+        color: var(--good);
+        border-color: #bfe0c7;
+        background: #edf9f1;
+      }
+
+      .status.err {
+        display: block;
+        color: var(--bad);
+        border-color: #e9bebe;
+        background: #fff2f2;
+      }
+
+      .hint {
+        margin-top: 14px;
+        font-size: 14px;
+        color: var(--muted);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <section class="card">
+        <h1>Strelle Weekly Upload</h1>
+        <p>PDF auswaehlen, Kalenderwoche eintragen und hochladen. Strapi verknuepft die Datei automatisch mit dem Weekly Menu.</p>
+
+        <form id="weekly-upload-form">
+          <div>
+            <label for="token">Upload Token</label>
+            <input id="token" name="token" type="password" required autocomplete="off" placeholder="Upload-Token" />
+          </div>
+
+          <div class="grid">
+            <div>
+              <label for="calendarWeek">Kalenderwoche (1-53)</label>
+              <input id="calendarWeek" name="calendarWeek" type="number" min="1" max="53" required />
+            </div>
+            <div>
+              <label for="title">Titel (optional)</label>
+              <input id="title" name="title" type="text" placeholder="z. B. Wochenmenu KW 10" />
+            </div>
+          </div>
+
+          <div class="grid">
+            <div>
+              <label for="validFrom">Gueltig von (optional)</label>
+              <input id="validFrom" name="validFrom" type="date" />
+            </div>
+            <div>
+              <label for="validTo">Gueltig bis (optional)</label>
+              <input id="validTo" name="validTo" type="date" />
+            </div>
+          </div>
+
+          <div>
+            <label for="teaserText">Teaser Text (optional)</label>
+            <textarea id="teaserText" name="teaserText" placeholder="Kurzer Hinweis fuer das Wochenangebot"></textarea>
+          </div>
+
+          <div>
+            <label for="file">PDF Datei</label>
+            <input id="file" name="file" type="file" accept="application/pdf" required />
+          </div>
+
+          <button id="submit-btn" type="submit">PDF hochladen</button>
+        </form>
+
+        <div id="status" class="status" role="status" aria-live="polite"></div>
+        <p class="hint">Direktlink fuer Kunden: <code>/weekly-upload.html</code></p>
+      </section>
+    </main>
+
+    <script>
+      const form = document.getElementById('weekly-upload-form');
+      const statusEl = document.getElementById('status');
+      const submitBtn = document.getElementById('submit-btn');
+      const tokenInput = document.getElementById('token');
+
+      const params = new URLSearchParams(window.location.search);
+      const tokenFromUrl = params.get('token');
+      if (tokenFromUrl) {
+        tokenInput.value = tokenFromUrl;
+      }
+
+      function showStatus(message, kind) {
+        statusEl.className = 'status ' + kind;
+        statusEl.textContent = message;
+      }
+
+      form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        statusEl.className = 'status';
+        statusEl.textContent = '';
+        submitBtn.disabled = true;
+
+        try {
+          const data = new FormData();
+          const file = document.getElementById('file').files[0];
+          if (!file) {
+            throw new Error('Bitte zuerst eine PDF auswaehlen.');
+          }
+
+          data.append('file', file);
+          data.append('calendarWeek', document.getElementById('calendarWeek').value);
+
+          const optionalFields = ['title', 'validFrom', 'validTo', 'teaserText'];
+          optionalFields.forEach((field) => {
+            const value = document.getElementById(field).value.trim();
+            if (value) {
+              data.append(field, value);
+            }
+          });
+
+          const token = tokenInput.value.trim();
+          if (!token) {
+            throw new Error('Upload Token fehlt.');
+          }
+
+          const response = await fetch('/api/weekly-menu/customer-upload', {
+            method: 'POST',
+            headers: {
+              'x-upload-token': token,
+            },
+            body: data,
+          });
+
+          let payload = null;
+          try {
+            payload = await response.json();
+          } catch (_err) {
+            payload = null;
+          }
+
+          if (!response.ok) {
+            const detail = payload && (payload.error?.message || payload.message);
+            throw new Error(detail || ('Upload fehlgeschlagen (HTTP ' + response.status + ')'));
+          }
+
+          const week = payload?.calendarWeek ? ' KW ' + payload.calendarWeek : '';
+          showStatus('Upload erfolgreich' + week + '. Weekly Menu wurde aktualisiert.', 'ok');
+          form.reset();
+          if (tokenFromUrl) {
+            tokenInput.value = tokenFromUrl;
+          }
+        } catch (error) {
+          showStatus(error.message || 'Unbekannter Fehler beim Upload.', 'err');
+        } finally {
+          submitBtn.disabled = false;
+        }
+      });
+    </script>
+  </body>
+</html>

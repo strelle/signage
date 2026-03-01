@@ -1,0 +1,36 @@
+{
+    "kind": "singleType",
+    "collectionName": "menu_cards",
+    "info": {
+        "singularName": "menu-card",
+        "pluralName": "menu-cards",
+        "displayName": "Menu Card",
+        "description": "Speisekarte (PDF) fuer die Anzeige"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true,
+            "default": "Speisekarte"
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        },
+        "menuPdf": {
+            "type": "media",
+            "multiple": false,
+            "required": true,
+            "allowedTypes": [
+                "files"
+            ]
+        },
+        "description": {
+            "type": "text"
+        }
+    }
+}

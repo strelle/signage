@@ -1,0 +1,46 @@
+{
+  "kind": "singleType",
+  "collectionName": "weekly_menus",
+  "info": {
+    "singularName": "weekly-menu",
+    "pluralName": "weekly-menus",
+    "displayName": "Weekly Menu",
+    "description": "Wochenmenue (PDF) fuer kundenseitige Pflege"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "pluginOptions": {},
+  "attributes": {
+    "title": {
+      "type": "string",
+      "required": true,
+      "default": "Wochenmenue"
+    },
+    "calendarWeek": {
+      "type": "integer",
+      "required": true
+    },
+    "validFrom": {
+      "type": "date"
+    },
+    "validTo": {
+      "type": "date"
+    },
+    "isActive": {
+      "type": "boolean",
+      "default": true
+    },
+    "menuPdf": {
+      "type": "media",
+      "multiple": false,
+      "required": true,
+      "allowedTypes": [
+        "files"
+      ]
+    },
+    "teaserText": {
+      "type": "text"
+    }
+  }
+}

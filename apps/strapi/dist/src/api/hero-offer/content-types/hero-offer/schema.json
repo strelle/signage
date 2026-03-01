@@ -1,0 +1,53 @@
+{
+    "kind": "singleType",
+    "collectionName": "hero_offers",
+    "info": {
+        "singularName": "hero-offer",
+        "pluralName": "hero-offers",
+        "displayName": "Hero Offer",
+        "description": "Prominentes Fruehstuecks-/Top-Angebot fuer die Signage-Startflaeche"
+    },
+    "options": {
+        "draftAndPublish": true
+    },
+    "pluginOptions": {},
+    "attributes": {
+        "title": {
+            "type": "string",
+            "required": true
+        },
+        "subtitle": {
+            "type": "text"
+        },
+        "badge": {
+            "type": "string"
+        },
+        "timeWindowLabel": {
+            "type": "string"
+        },
+        "ctaText": {
+            "type": "string"
+        },
+        "priceLabel": {
+            "type": "string"
+        },
+        "isActive": {
+            "type": "boolean",
+            "default": true
+        },
+        "heroImage": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "images"
+            ]
+        },
+        "heroPdf": {
+            "type": "media",
+            "multiple": false,
+            "allowedTypes": [
+                "files"
+            ]
+        }
+    }
+}

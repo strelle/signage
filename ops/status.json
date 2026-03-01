@@ -1,0 +1,13 @@
+{
+  "project": "signage",
+  "overallStatus": "yellow",
+  "owner": "strelle",
+  "lastUpdated": "2026-03-01T11:55:41Z",
+  "summary": "Weekly menu customer upload lane added (token-protected API + simple upload page + OpenClaw intake script).",
+  "nextSteps": [
+    "set WEEKLY_UPLOAD_TOKEN in NAS runtime env",
+    "deploy latest Strapi image and verify /weekly-upload.html live",
+    "run ops/upload-weekly-menu.sh against intake PDF and confirm weekly-menu update"
+  ],
+  "canonicalHandoff": "/Users/openclaw/Library/Mobile Documents/com~apple~CloudDocs/Synology Configurator/docs/projects/signage/ops/HANDOFF.md"
+}
